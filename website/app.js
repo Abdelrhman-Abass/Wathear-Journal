@@ -20,8 +20,8 @@ const data = async ()=> {
     const feelings = document.getElementById('feelings').value;
     tem(url, zip, apiKey)
     .then(function (data){
-        const data = {temperature: data.main.temp, date: newDate, feelings: feelings };
-        postData('/dataAdd', data).then(function() {retrieveData()})
+        const dat = {temperature: data.main.temp, date: newDate, feelings: feelings };
+        postData('/dataAdd', dat).then(function() {retrieve()})
     })
 };
 
@@ -59,7 +59,7 @@ const postData = async (url = '', data = {}) => {
 
 
 // Update user interface
-const retrieveData = async () =>{
+const retrieve = async () =>{
     const request = await fetch('/data');
     try {
     // Transform into JSON
