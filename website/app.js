@@ -4,74 +4,74 @@ const url = 'https://api.openweathermap.org/data/2.5/weather?zip=';
 const apiKey = "1ca6261d35c51434ba88bc9e3c2f0437";
 
 const button = document.getElementById('generate');
-// HTML elements to get the values
 
-const date = document.getElementById('date');
-const temp = document.getElementById('temp');
-const content = document.getElementById('content'); 
+
 
 // Create a new date instance dynamically with JS
 let d = new Date();
-let newDate = d.getMonth()+'.'+ d.getDate()+'.'+ d.getFullYear();
-
-
-const data = async ()=> {
-    const zip = document.getElementById('zip').value;
-    const feelings = document.getElementById('feelings').value;
-    tem(url, zip, apiKey)
-    .then(function (data){
-        const dat = {temperature: data.main.temp, date: newDate, feelings: feelings };
-        postData('/dataAdd', dat).then(function() {retrieve()})
-    })
-};
-
-button.addEventListener('click', data);
+let newDate = `${d.getMonth()}.${d.getDate()}.${d.getFullYear()}`;
 
 // Async GET
-const tem = async (baseURL, code, key)=>{
-    const res = await fetch(baseURL + code + ',us' + '&APPID=' + key);
+const tem = async (URL, code, key)=>{
+    const respo = await fetch(URL + code + ',us' + '&APPID=' + key);
     try {
-        const getData = await res.json();
-        return getData;
-    } catch (error) {
-        console.log(error);
+        const get = await respo.json();
+        return get;
+    } catch (e) {
+        console.log(e);
     }
 };
 
 // Async POST
-const postData = async (url = '', data = {}) => {
+const postd = async (url = '', data = {}) => {
     const req = await fetch(url, {
-        method: 'POST',
-        credentials: 'same-origin',
+        method: "POST",
+        credentials: "same-origin",
         headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-    });
+  });
     try {
-        const newData = await req.json();
-        return newData;
+        const newd = await req.json();
+        return newd;
     }
-    catch (error) {
-        console.log('Error', error);
+    catch (e) {
+        console.log('Error', e);
     }
-}
+};
+
+
 
 
 // Update user interface
 const retrieve = async () =>{
-    const request = await fetch('/data');
+    const request = await fetch('http://localhost:5500/data');
     try {
     // Transform into JSON
-    const allData = await request.json()
-    console.log(allData)
+    const alld = await request.json()
+    console.log(alld)
     // Write updated data to DOM elements
-    document.getElementById('temp').innerHTML = Math.round(allData.temp)+ 'D';
-    document.getElementById('content').innerHTML = allData.feelings;
-    document.getElementById("date").innerHTML =allData.date;
+    document.getElementById('temp').innerHTML = Math.round(alld.temp)+ 'D';
+    document.getElementById('content').innerHTML = alld.feelings;
+    document.getElementById("date").innerHTML =alld.date;
     }
-    catch(error) {
-      console.log("error", error);
+    catch(e) {
+      console.log("error", e);
       // appropriately handle the error
     }
-   }
+};
+// handling data
+const data = async ()=> {
+    const zip = document.getElementById('zip').value;
+    const feelings = document.getElementById('feelings').value;
+    if (zip === 0){alert("Please enter a valid zipcode");}
+    else{tem(url, zip, apiKey)
+        .then(function (data){
+            const dat = {temperature: data.main.temp, date: newDate, feelings: feelings };
+            postd('http://localhost:5500/dataAdd', dat);
+        })
+        retrieve()
+    };
+};   
+button.addEventListener('click', data);
